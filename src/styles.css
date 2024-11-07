@@ -1,0 +1,26 @@
+ body{
+    box-sizing: border-box;
+ }
+ 
+.containers{
+    max-width: 1250px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+@media screen and (max-width: 1200px) {
+    .containers{
+       padding: 20px;
+    }
+   
+  }
+
+@media screen and (max-width: 400px) {
+    .containers{
+       padding: 20px;
+    }
+   
+  }
+    
+ 

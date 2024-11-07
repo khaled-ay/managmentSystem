@@ -1,0 +1,264 @@
+<!--Navbar Design Start-->
+
+<nav class="navbar navbar-expand-lg bg-secondary text-white">
+  <div
+    class="containers d-flex justify-content-between align-items-center py-2"
+  >
+    <a class="navbar-brand text-white fw-semibold fs-3" href="#">Employee</a>
+    <div>
+      <button
+        type="button"
+        class="btn btn-dark px-2 py-2"
+        (click)="openModel()"
+      >
+        Add New
+      </button>
+      <button class="btn btn-danger px-2 py-2 mx-2" (click)="resetData()">
+        Reset Data
+      </button>
+    </div>
+  </div>
+</nav>
+<!--Navbar Design End-->
+
+
+<div class="containers">
+  <!--SearchBar Design Start-->
+  <div class="mb-4">
+    <div class="form-outline" data-mdb-input-init>
+      <input
+        (input)="filterEmployees()"
+        type="search"
+        id="form1"
+        class="form-control py-3 w-100"
+        placeholder="Search By Name or Department"
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+  </div>
+  <!--SearchBar Design End-->
+
+ <!--Employee List Design Start-->
+  @if (employeeList.length !== 0) {
+  <div class="row row-gap-3">
+    @for (item of filteredEmployeeList; track $index) {
+    <div class="col-md-6 col-sm-12">
+      <div class="card">
+        <div
+          class="card_header d-flex justify-content-between align-items-center"
+        >
+          <h2 class="fs-4">{{ item.name }}</h2>
+          <h2 class="text-secondary fs-4">{{ item.id }}</h2>
+        </div>
+        <hr class="opacity-25" />
+        <div class="card_details">
+          <p class="fw-semibold">
+            Employee Position:
+            <span class="fw-normal">{{ item.position }}</span>
+          </p>
+          <p class="fw-semibold">
+            Employee Department:
+            <span class="fw-normal">{{ item.department }}</span>
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-secondary py-2"
+          (click)="showMore(item)"
+        >
+          Click To Show More Details
+        </button>
+
+        <div class="d-flex mt-2 w-100 gap-2">
+          <button
+            type="button"
+            class="btn btn-primary w-50 py-2"
+            (click)="onEdit(item)"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger w-50 py-2"
+            (click)="onDelete(item)"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="row">
+    <div class="col-12 p-4 text-center">
+      <p>No Data Found , Try To Create New Data</p>
+    </div>
+  </div>
+  }
+</div>
+<!--Employee List Design End-->
+
+<!--Edit and Add Modal Design Start-->
+<div class="modal " id="myModal" #myModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add New Employee</h4>
+        <button type="button" class="btn-close" (click)="closeModel()"></button>
+      </div>
+      <form
+        [formGroup]="addForm"
+        (ngSubmit)="saveEmployee()"
+        class="containers"
+      >
+        <div class="form_input">
+          <label for="name">Full Name:</label>
+          <input
+            id="name"
+            formControlName="name"
+            placeholder="Enter Full Name"
+          />
+          <div
+            *ngIf="addForm.get('name')?.invalid && addForm.get('name')?.touched"
+            class="required"
+          >
+            Name is required.
+          </div>
+        </div>
+
+        <div class="form_input">
+          <label for="position">Position:</label>
+          <input
+            id="position"
+            formControlName="position"
+            placeholder="Enter Position"
+          />
+          <div
+            *ngIf="
+              addForm.get('position')?.invalid &&
+              addForm.get('position')?.touched
+            "
+            class="required"
+          >
+            Position is required.
+          </div>
+        </div>
+
+        <div class="form_input">
+          <label for="email">Email:</label>
+          <input id="email" formControlName="email" placeholder="Enter Email" />
+          <div
+            *ngIf="
+              addForm.get('email')?.invalid && addForm.get('email')?.touched
+            "
+            class="required"
+          >
+            Please enter a valid email address.
+          </div>
+        </div>
+
+        <div class="form_input">
+          <label for="department">Department:</label>
+          <input
+            id="department"
+            type="text"
+            formControlName="department"
+            placeholder="Enter Department"
+          />
+        </div>
+
+        <div class="form_input">
+          <label for="performanceRating">Performance Rating:</label>
+          <input
+            id="rating"
+            type="number"
+            formControlName="rating"
+            placeholder="Enter Rating"
+          />
+          <div
+            *ngIf="
+              addForm.get('rating')?.invalid && addForm.get('rating')?.touched
+            "
+            class="bg-warning p-2 mt-2"
+          >
+            Performance rating must be between 1 and 5.
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="closeModel()">
+            Close
+          </button>
+          @if (employeeObj.id ==0) {
+          <button
+            type="submit"
+            [disabled]="this.addForm.invalid"
+            class="btn btn-primary"
+            (click)="saveEmployee()"
+          >
+            Save Employee
+          </button>
+          } @else {
+          <button
+            type="submit"
+            [disabled]="this.addForm.invalid"
+            class="btn btn-success"
+            (click)="updateEmployee()"
+          >
+            Update Employee
+          </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--Edit and Add Modal Design End-->
+
+<!--ShowMore Modal Design Start-->
+<div class="modal" id="optionModel" #optionModel>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Employe Details</h4>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeOptionModel()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Employee ID:</strong> {{ employeeObj.id }}</p>
+        <p><strong>Employee Name:</strong> {{ employeeObj.name }}</p>
+        <p><strong>Position:</strong> {{ employeeObj.position }}</p>
+        <p><strong>Department:</strong> {{ employeeObj.department }}</p>
+        <p><strong>Performance Rating:</strong> {{ employeeObj.rating }}</p>
+
+        <details>
+          <summary class="summary">Performance Rating History</summary>
+          <ul
+            class="d-flex justify-content-between align-items-center py-3 px-2 gap-1"
+          >
+            <li>3</li>
+            <li>2</li>
+            <li>4</li>
+            <li>5</li>
+          </ul>
+        </details>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="closeOptionModel()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--ShowMore Modal Design Start-->
